@@ -144,9 +144,9 @@ size_t json::get_size() const {
   return m_properties.size() + m_elements.size() + m_value.size();
 }
 
-std::string json::as_string() const { return m_value; }
+template <> std::string json::as<std::string>() const { return m_value; }
 
-bool json::as_bool() const {
+template <> bool json::as<bool>() const {
   if (m_type == json_type::JOBJECT ||
       (m_type == json_type::JARRAY && m_elements.size() > 0) ||
       (m_type == json_type::JSTRING && m_value.size() > 0) ||
@@ -159,11 +159,11 @@ bool json::as_bool() const {
   return false;
 }
 
-int json::as_int() const { return std::stoi(m_value); }
+template <> int json::as<int>() const { return std::stoi(m_value); }
 
-float json::as_float() const { return std::stof(m_value); }
+template <> float json::as<float>() const { return std::stof(m_value); }
 
-double json::as_double() const { return std::stod(m_value); }
+template <> double json::as<double>() const { return std::stod(m_value); }
 
 std::string json::to_string() const {
   if (m_type == json_type::JBOOLEAN) {
@@ -171,11 +171,11 @@ std::string json::to_string() const {
   } else if (m_type == json_type::JNUMBER) {
     return m_value;
   } else if (m_type == json_type::JSTRING) {
-    return m_value;
+    return "\"" + m_value + "\"";
   } else if (m_type == json_type::JOBJECT) {
     std::string str = "{";
     for (const auto &property : m_properties) {
-      str += property.first + ":" + property.second.to_string();
+      str += "\"" + property.first + "\"" + ":" + property.second.to_string();
       if (property.first != m_properties.crbegin()->first)
         str += ",";
     }

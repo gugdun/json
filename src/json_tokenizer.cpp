@@ -1,7 +1,5 @@
-#include "json_token.h"
 #include <json_tokenizer.h>
 #include <stdexcept>
-#include <iostream>
 
 std::queue<json_token> &json_tokenizer::tokenize(std::istream &input) {
   while (!input.eof()) {
@@ -72,7 +70,9 @@ std::queue<json_token> &json_tokenizer::tokenize(std::istream &input) {
         str.push_back(c);
       } while (!input.eof() && ((c = input.get()) == '.' || (c >= '0' && c <= '9')));
       std::stod(str); // check format
-      m_tokens.push(json_token(token_type::TNUMBER, str));
+      json_token number = json_token(token_type::TNUMBER, str);
+      m_tokens.push(number);
+      input.unget();
     }
   }
   return m_tokens;

@@ -20,6 +20,7 @@ struct json_token {
   std::string value;
   token_type type;
   json_token(token_type type = token_type::TNULL, std::string value = "") : type(type), value(value) {}
+  std::string to_string();
 };
 
 #endif // _JSON_TOKEN_H

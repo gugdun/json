@@ -1,5 +1,5 @@
-#include <json_token.h>
 #include <json_parser.h>
+#include <json_token.h>
 #include <stdexcept>
 
 json json_parser::parse(std::queue<json_token> &tokens) {
@@ -26,12 +26,14 @@ json json_parser::parse(std::queue<json_token> &tokens) {
     tokens.pop();
     while (!tokens.empty() && tokens.front().type != token_type::TBRACE_CLOSE) {
       if (tokens.front().type != token_type::TSTRING) {
-        throw std::runtime_error("Property name expected, found: " + tokens.front().value);
+        throw std::runtime_error("Property name expected, found: \"" +
+                                 tokens.front().to_string() + "\"");
       }
       std::string key = tokens.front().value;
       tokens.pop();
       if (!tokens.empty() && tokens.front().type != token_type::TCOLON) {
-        throw std::runtime_error("Expected ':', got \"" + tokens.front().value + "\"");
+        throw std::runtime_error("Expected ':', got \"" +
+                                 tokens.front().to_string() + "\"");
       } else if (tokens.empty()) {
         throw std::runtime_error("Unexpected end of file");
       }
@@ -45,6 +47,9 @@ json json_parser::parse(std::queue<json_token> &tokens) {
         if (tokens.empty() || tokens.front().type == token_type::TBRACE_CLOSE) {
           throw std::runtime_error("Comma unexpected");
         }
+      } else if (tokens.front().type != token_type::TBRACE_CLOSE) {
+        throw std::runtime_error("Expected '}', got \"" +
+                                 tokens.front().to_string() + "\"");
       }
     }
     if (tokens.empty()) {
@@ -55,13 +60,18 @@ json json_parser::parse(std::queue<json_token> &tokens) {
   } else if (tokens.front().type == token_type::TBRACKET_OPEN) {
     current.set_type(json_type::JARRAY);
     tokens.pop();
-    while (!tokens.empty() && tokens.front().type != token_type::TBRACKET_CLOSE) {
+    while (!tokens.empty() &&
+           tokens.front().type != token_type::TBRACKET_CLOSE) {
       current.add_element(json_parser::parse(tokens));
       if (tokens.front().type == token_type::TCOMMA) {
         tokens.pop();
-        if (tokens.empty() || tokens.front().type == token_type::TBRACKET_CLOSE) {
+        if (tokens.empty() ||
+            tokens.front().type == token_type::TBRACKET_CLOSE) {
           throw std::runtime_error("Comma unexpected");
         }
+      } else if (tokens.front().type != token_type::TBRACKET_CLOSE) {
+        throw std::runtime_error("Expected ']', got \"" +
+                                 tokens.front().to_string() + "\"");
       }
     }
     if (tokens.empty()) {
@@ -70,6 +80,5 @@ json json_parser::parse(std::queue<json_token> &tokens) {
       tokens.pop();
     }
   }
-  
   return current;
 }
