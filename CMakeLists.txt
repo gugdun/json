@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.22)
+cmake_minimum_required(VERSION 3.0)
 project(json)
 set(CMAKE_CXX_STANDARD 17)
 
@@ -11,4 +11,9 @@ add_library(
   src/json_tokenizer.cpp)
 
 install(TARGETS json DESTINATION /usr/lib)
-install(FILES include/json.h DESTINATION include)
+install(
+  FILES include/json.h
+        include/json_parser.h
+        include/json_token.h
+        include/json_tokenizer.h
+  DESTINATION include)
