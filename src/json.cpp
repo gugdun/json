@@ -144,9 +144,9 @@ size_t json::get_size() const {
   return m_properties.size() + m_elements.size() + m_value.size();
 }
 
-template <> std::string json::as<std::string>() const { return m_value; }
+std::string json::as_string() const { return m_value; }
 
-template <> bool json::as<bool>() const {
+bool json::as_bool() const {
   if (m_type == json_type::JOBJECT ||
       (m_type == json_type::JARRAY && m_elements.size() > 0) ||
       (m_type == json_type::JSTRING && m_value.size() > 0) ||
@@ -159,11 +159,11 @@ template <> bool json::as<bool>() const {
   return false;
 }
 
-template <> int json::as<int>() const { return std::stoi(m_value); }
+int json::as_int() const { return std::stoi(m_value); }
 
-template <> float json::as<float>() const { return std::stof(m_value); }
+float json::as_float() const { return std::stof(m_value); }
 
-template <> double json::as<double>() const { return std::stod(m_value); }
+double json::as_double() const { return std::stod(m_value); }
 
 std::string json::to_string() const {
   if (m_type == json_type::JBOOLEAN) {

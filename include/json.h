@@ -40,12 +40,11 @@ public:
 
   size_t get_size() const;
 
-  template <typename T> T as() const;
-  template <> std::string as() const;
-  template <> bool as() const;
-  template <> int as() const;
-  template <> float as() const;
-  template <> double as() const;
+  std::string as_string() const;
+  bool as_bool() const;
+  int as_int() const;
+  float as_float() const;
+  double as_double() const;
 
   std::string to_string() const;
   static json parse(std::istream &input);
